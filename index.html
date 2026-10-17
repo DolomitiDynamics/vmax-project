@@ -1,0 +1,820 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<script>document.documentElement.classList.add('js')</script>
+<title>VMax — Il tuo ingegnere di pista</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0a0b0d; --surface:#14161a; --surface-2:#1a1d22;
+    --paper:#e8eaed; --paper-dim:#8b9199; --muted:#5b6069;
+    --green:#4ade80; --green-hover:#6ee7a0; --blue:#5b9df9; --orange:#f2a154; --purple:#c084fc; --red:#ef5b5b;
+    --line:#23262b;
+    --display:"Space Grotesk",system-ui,sans-serif;
+    --body:"IBM Plex Sans",system-ui,sans-serif; --mono:"IBM Plex Mono",ui-monospace,monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--ink);color:var(--paper);font-family:var(--body);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  a{color:inherit;text-decoration:none}
+
+  /* ---- nav ---- */
+  header{position:fixed;inset:0 0 auto 0;z-index:30;height:76px;display:flex;align-items:center;
+    justify-content:space-between;padding:0 clamp(20px,4vw,56px);
+    background:linear-gradient(rgba(10,10,11,.6),transparent)}
+  .wordmark{font-family:var(--display);font-weight:700;font-size:23px;letter-spacing:.02em}
+  .wordmark .v{color:var(--green)} .wordmark .sl{color:rgba(255,255,255,.5)} .wordmark .m{color:var(--paper)}
+  nav.links{display:flex;gap:34px;font-size:14.5px;color:var(--paper);font-weight:500}
+  nav.links a{opacity:.82;transition:opacity .2s}
+  nav.links a:hover{opacity:1}
+  .right{display:flex;align-items:center;gap:22px}
+  .lang{font-family:var(--mono);font-size:12px;color:var(--paper);display:flex;gap:7px;align-items:center}
+  .lang button{background:none;border:0;color:#fff;opacity:.5;cursor:pointer;font:inherit;padding:0;transition:opacity .2s}
+  .lang button.active{opacity:1}
+  .lang i{opacity:.4;font-style:normal}
+  .cta{font-family:var(--body);font-weight:600;font-size:14px;cursor:pointer;background:var(--green);color:#0a0b0d;
+    border:0;padding:12px 20px;border-radius:3px;transition:transform .18s,background .18s;white-space:nowrap}
+  .cta:hover{transform:translateY(-1px);background:var(--green-hover)}
+
+  /* ---- hero ---- */
+  .hero{position:relative;min-height:100dvh;overflow:hidden;display:flex;align-items:flex-end}
+  .hero__media{position:absolute;inset:0;z-index:0}
+  .hero__media video{width:100%;height:100%;object-fit:cover;object-position:center 42%;
+    filter:saturate(.9) contrast(1.05) brightness(.58);transform:scale(1.06);will-change:transform}
+  /* legibility scrims + brand tint + top scrim to bury background clutter */
+  .hero__media::after{content:"";position:absolute;inset:0;
+    background:
+      linear-gradient(90deg, rgba(10,10,11,.94) 0%, rgba(10,10,11,.58) 38%, rgba(10,10,11,.15) 72%, rgba(10,10,11,.42) 100%),
+      linear-gradient(0deg, rgba(10,10,11,.96) 0%, rgba(10,10,11,.2) 46%, rgba(10,10,11,.86) 100%),
+      radial-gradient(55% 45% at 82% 24%, rgba(74,222,128,.18), transparent 68%),
+      radial-gradient(50% 50% at 4% 46%, rgba(46,134,255,.16), transparent 72%)}
+  /* cinematic film grain */
+  .grain{position:fixed;inset:0;z-index:40;pointer-events:none;opacity:.06;mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+    background-size:160px 160px}
+  .hero__content{position:relative;z-index:2;width:100%;max-width:1360px;margin:0 auto;
+    padding:0 clamp(20px,4vw,56px) clamp(56px,8vh,104px)}
+  .kicker{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--paper);
+    display:flex;align-items:center;gap:12px;margin-bottom:22px;opacity:.85}
+  .kicker .r{width:30px;height:2px;background:var(--green)}
+  h1{font-family:var(--display);font-weight:700;line-height:.9;letter-spacing:-.015em;
+    font-size:clamp(3rem,7.6vw,6.8rem);margin-bottom:22px;max-width:14ch}
+  h1 .ln{display:block;overflow:hidden;padding-bottom:.03em}
+  h1 .ln>span{display:block;will-change:transform}
+  h1 .red{color:var(--green)}
+  .lede{font-size:clamp(1.05rem,1.4vw,1.3rem);color:var(--paper-dim);max-width:30em;margin-bottom:34px;line-height:1.5}
+  .actions{display:flex;align-items:center;gap:28px;flex-wrap:wrap}
+  .btn-primary{font-family:var(--body);font-weight:600;font-size:15px;background:var(--green);color:#0a0b0d;border:0;
+    border-radius:3px;padding:16px 28px;cursor:pointer;transition:transform .18s,background .18s}
+  .btn-primary:hover{transform:translateY(-2px);background:var(--green-hover)}
+  .btn-link{font-weight:600;font-size:15px;color:var(--paper);display:inline-flex;align-items:center;gap:10px;cursor:pointer}
+  .btn-link .ar{transition:transform .2s;color:var(--blue)}
+  .btn-link:hover .ar{transform:translateX(5px)}
+
+  .credit{position:absolute;right:clamp(16px,3vw,40px);bottom:16px;z-index:2;
+    font-family:var(--mono);font-size:10px;letter-spacing:.06em;color:rgba(255,255,255,.4)}
+
+  @media (max-width:760px){
+    nav.links{display:none}
+    .right .cta{display:none}
+    h1{font-size:clamp(2.8rem,13vw,4rem)}
+  }
+  @media (prefers-reduced-motion:reduce){ *{animation:none!important;transition:none!important} .hero__media video{transform:none!important} }
+
+  /* ===== come funziona ===== */
+  .how{position:relative;z-index:2;background:var(--ink);max-width:1360px;margin:0 auto;
+    padding:clamp(80px,13vh,168px) clamp(20px,4vw,56px)}
+  .how__head{max-width:44ch;margin-bottom:clamp(48px,7vh,96px)}
+  .how h2{font-family:var(--display);font-weight:700;font-size:clamp(2.2rem,4.8vw,3.7rem);line-height:1;
+    letter-spacing:-.01em;margin-bottom:18px}
+  .how__lede{font-size:clamp(1.05rem,1.3vw,1.2rem);color:var(--paper-dim);line-height:1.5}
+  .how__grid{display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(40px,6vw,96px);align-items:start}
+  .steps{list-style:none;position:relative;padding-left:0}
+  .steps__line{position:absolute;left:10px;top:6px;bottom:12px;width:2px;background:rgba(255,255,255,.1);
+    overflow:hidden;border-radius:2px}
+  .steps__line i{position:absolute;inset:0;background:linear-gradient(var(--green),var(--blue));
+    transform-origin:top center;transform:scaleY(0)}
+  .steps li{position:relative;padding-left:48px;padding-bottom:clamp(30px,5vh,54px)}
+  .js .steps li{transform:translateY(18px);transition:transform .55s cubic-bezier(.16,1,.3,1)}
+  .steps li:last-child{padding-bottom:0}
+  .steps li.on{opacity:1;transform:none}
+  .steps li::before{content:"";position:absolute;left:0;top:5px;width:22px;height:22px;border-radius:50%;
+    border:2px solid var(--line);background:var(--ink);transition:border-color .4s,box-shadow .4s}
+  .steps li.on::before{border-color:var(--green);box-shadow:0 0 0 5px rgba(74,222,128,.14)}
+  .steps h3{font-family:var(--display);font-weight:600;font-size:clamp(1.3rem,2.1vw,1.75rem);margin-bottom:9px;letter-spacing:-.005em}
+  .steps p{color:var(--paper-dim);font-size:1.02rem;line-height:1.55;max-width:36ch}
+
+  .preview{display:flex;flex-direction:column;align-items:center}
+  .phone{width:min(290px,80%);aspect-ratio:9/18.6;border-radius:38px;padding:13px;
+    background:linear-gradient(160deg,#191a1f,#0b0c0f);border:1px solid rgba(255,255,255,.1);
+    box-shadow:0 50px 100px -34px #000,inset 0 1px 0 rgba(255,255,255,.06)}
+  .phone__scr{position:relative;height:100%;border-radius:26px;overflow:hidden;background:#090a0d;
+    border:1px solid rgba(255,255,255,.06);display:flex;flex-direction:column}
+  .scr__top{display:flex;justify-content:space-between;align-items:center;padding:13px 15px 2px;
+    font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;color:var(--muted)}
+  .scr__top b{color:var(--green);font-weight:500}
+  .scr__traj{flex:1;position:relative}
+  .scr__traj svg{position:absolute;inset:0;width:100%;height:100%}
+  .pedals{display:flex;gap:9px;padding:0 15px 16px;height:33%}
+  .pedal{flex:1;position:relative;border-radius:10px;background:rgba(255,255,255,.05);overflow:hidden;
+    display:flex;align-items:flex-end;border:1px solid rgba(255,255,255,.05)}
+  .pedal i{display:block;width:100%;height:30%}
+  .pedal.throttle i{background:linear-gradient(0deg,#17854a,var(--green))}
+  .pedal.brake i{background:linear-gradient(0deg,#9c6a2a,var(--orange))}
+  .pedal label{position:absolute;top:8px;left:0;right:0;text-align:center;font-family:var(--mono);
+    font-size:8.5px;letter-spacing:.14em;color:rgba(255,255,255,.58)}
+  .modes{display:grid;gap:0;margin-top:30px;width:min(360px,96%)}
+  .mode{display:grid;grid-template-columns:96px 1fr;gap:12px;align-items:baseline;
+    padding:13px 0;border-top:1px solid var(--line)}
+  .mode b{font-weight:700;font-size:.95rem}
+  .mode.scr b{color:var(--blue)} .mode.aud b{color:var(--paper)} .mode.hap b{color:var(--muted)}
+  .mode span{font-size:.88rem;color:var(--paper-dim);line-height:1.45}
+
+  @media (max-width:860px){
+    .how__grid{grid-template-columns:1fr;gap:52px}
+    .preview{order:-1}
+  }
+  /* how section v2 — real product */
+  .how__steps{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(24px,3vw,48px);margin-bottom:clamp(44px,6vh,78px)}
+  .hstep{border-top:2px solid var(--green);padding-top:18px}
+  .hstep h3{font-family:var(--display);font-weight:600;font-size:clamp(1.2rem,1.9vw,1.5rem);margin-bottom:9px;letter-spacing:-.005em}
+  .hstep p{color:var(--paper-dim);font-size:.98rem;line-height:1.55}
+  .how__shot{margin:0 0 clamp(40px,6vh,68px)}
+  .how__shot .frame{border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--surface);
+    box-shadow:0 50px 110px -50px #000, inset 0 1px 0 rgba(255,255,255,.04)}
+  .frame__bar{display:flex;align-items:center;gap:9px;padding:11px 16px;border-bottom:1px solid var(--line);
+    font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--paper-dim)}
+  .frame__bar .sq{width:10px;height:10px;border-radius:2px;background:var(--green)}
+  .how__shot img{display:block;width:100%;height:auto}
+  .how__shot figcaption{margin-top:16px;color:var(--paper-dim);font-size:1rem;line-height:1.5;max-width:64ch}
+  .how__modes{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(20px,3vw,44px)}
+  @media(max-width:760px){.how__steps,.how__modes{grid-template-columns:1fr;gap:26px}}
+  /* In pista (onboard app) / Nei box surfaces */
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+  .gsq{display:inline-block;width:9px;height:9px;border-radius:2px;background:var(--green);flex:0 0 auto}
+  .surf{margin-bottom:clamp(40px,6vh,72px)}
+  .surf__label{display:flex;align-items:center;gap:9px;font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--paper-dim);margin-bottom:22px}
+  .how__shot .surf__label{margin-bottom:18px}
+  .pista{display:grid;grid-template-columns:300px 1fr;gap:clamp(36px,5vw,76px);align-items:center}
+  .phone2{width:300px;aspect-ratio:9/18.6;border-radius:34px;padding:12px;justify-self:center;
+    background:linear-gradient(160deg,#191a1f,#0b0c0f);border:1px solid rgba(255,255,255,.1);
+    box-shadow:0 50px 100px -40px #000, inset 0 1px 0 rgba(255,255,255,.06)}
+  .phone2__scr{height:100%;border-radius:24px;overflow:hidden;background:var(--ink);border:1px solid rgba(255,255,255,.06);display:flex;flex-direction:column}
+  .p2bar{display:flex;align-items:center;gap:8px;padding:13px 15px;font-family:var(--display);font-weight:600;font-size:13px;color:var(--paper);border-bottom:1px solid var(--line)}
+  .p2live{margin-left:auto;font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;color:var(--paper-dim);display:flex;align-items:center;gap:5px}
+  .p2live i{width:6px;height:6px;border-radius:50%;background:#DE4A4A;box-shadow:0 0 8px #DE4A4A;animation:pulse 1.6s infinite}
+  .gauge{position:relative;flex:1.15;overflow:hidden;background:#0d0f12}
+  .gauge__brake{position:absolute;top:0;left:0;right:0;height:10%;background:#DE4A4A;transition:height .08s linear}
+  .gauge__thr{position:absolute;bottom:0;left:0;right:0;height:60%;background:var(--green);transition:height .08s linear}
+  .p2vals{padding:15px 16px 18px;display:flex;flex-direction:column;gap:12px;border-top:1px solid var(--line)}
+  .vr{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+  .vr span{font-family:var(--body);font-size:12px;color:var(--paper-dim)}
+  .vr b{font-family:var(--display);font-weight:600;font-size:17px;font-variant-numeric:tabular-nums;color:var(--paper)}
+  .vr b.g{color:var(--green)} .vr b.r{color:#DE4A4A}
+  .pista__txt h3{font-family:var(--display);font-weight:600;font-size:clamp(1.4rem,2.2vw,1.9rem);margin-bottom:12px;letter-spacing:-.01em}
+  .pista__txt p{color:var(--paper-dim);font-size:1.05rem;line-height:1.55;max-width:42ch}
+  @media(max-width:860px){.pista{grid-template-columns:1fr;gap:32px} .phone2{justify-self:start}}
+
+  /* ===== per i circuiti ===== */
+  .circuits{position:relative;z-index:2;background:#0c0d10;border-top:1px solid rgba(255,255,255,.06)}
+  .circuits__in,.why__in{max-width:1360px;margin:0 auto;padding:clamp(80px,13vh,168px) clamp(20px,4vw,56px)}
+  .circuits h2,.why h2{font-family:var(--display);font-weight:700;font-size:clamp(2rem,4.5vw,3.5rem);
+    line-height:1.02;letter-spacing:-.012em;max-width:19ch}
+  .circuits__lead{font-size:clamp(1.05rem,1.3vw,1.2rem);color:var(--paper-dim);max-width:46ch;margin-top:18px;line-height:1.5}
+  .gain{display:grid;grid-template-columns:auto 1fr;gap:clamp(28px,4vw,64px);align-items:center;
+    margin:clamp(48px,7vh,92px) 0;padding:clamp(28px,4vh,46px) 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .gain__num{font-family:var(--display);font-weight:700;font-size:clamp(3.2rem,8vw,6.2rem);line-height:.9;
+    letter-spacing:-.02em;color:var(--paper);white-space:nowrap}
+  .gain__num .p{color:var(--green)}
+  .gain__lbl{color:var(--paper-dim);font-size:1rem;line-height:1.5;max-width:36ch;margin-bottom:18px}
+  .gain__break{display:flex;gap:30px;flex-wrap:wrap}
+  .gain__break b{display:block;font-family:var(--display);font-size:22px;color:var(--paper);font-weight:600;margin-bottom:2px}
+  .gain__break span{font-family:var(--mono);font-size:12px;letter-spacing:.04em;color:var(--muted)}
+  .drivers{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(24px,3vw,46px);margin-bottom:clamp(40px,6vh,72px)}
+  .driver{border-top:2px solid var(--green);padding-top:18px}
+  .driver h4{font-family:var(--display);font-weight:600;font-size:1.28rem;margin-bottom:8px}
+  .driver p{color:var(--paper-dim);font-size:.98rem;line-height:1.5}
+
+  /* ===== perché vmax ===== */
+  .why{position:relative;z-index:2;background:var(--ink);border-top:1px solid rgba(255,255,255,.06)}
+  .contrast{display:grid;grid-template-columns:1fr 1fr;margin:clamp(44px,7vh,88px) 0;border:1px solid var(--line);border-radius:3px;overflow:hidden}
+  .contrast>div{padding:clamp(24px,3.4vw,46px)}
+  .contrast .old{border-right:1px solid var(--line)}
+  .contrast h4{font-family:var(--mono);font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:16px}
+  .contrast .old h4{color:var(--muted)} .contrast .new h4{color:var(--green)}
+  .contrast p{font-family:var(--display);font-weight:500;font-size:clamp(1.15rem,1.7vw,1.5rem);line-height:1.25}
+  .contrast .old p{color:var(--paper-dim)} .contrast .new p{color:var(--paper)}
+  .contrast ul{list-style:none;margin-top:18px}
+  .contrast li{font-size:.92rem;color:var(--paper-dim);padding:9px 0;border-top:1px solid rgba(255,255,255,.07)}
+  .why__fwd{font-family:var(--display);font-weight:600;font-size:clamp(1.5rem,2.6vw,2.2rem);
+    line-height:1.08;letter-spacing:-.01em;max-width:20ch;margin-bottom:22px}
+  .why__fwd .hl{color:var(--blue)}
+  .why__cred{color:var(--paper-dim);font-size:1rem;max-width:48ch;line-height:1.55;border-top:1px solid var(--line);padding-top:22px}
+
+  .js .rv{transform:translateY(22px);transition:transform .6s cubic-bezier(.16,1,.3,1)}
+  .rv.in{opacity:1;transform:none}
+
+  @media (max-width:760px){
+    .drivers{grid-template-columns:1fr;gap:28px}
+    .gain{grid-template-columns:1fr;gap:18px}
+    .contrast{grid-template-columns:1fr}
+    .contrast .old{border-right:0;border-bottom:1px solid var(--line)}
+  }
+
+  /* ===== audiences ===== */
+  .audience{position:relative;z-index:2;background:#0c0d10;border-top:1px solid rgba(255,255,255,.06)}
+  .audience__in{max-width:1360px;margin:0 auto;padding:clamp(60px,9vh,120px) clamp(20px,4vw,56px)}
+  .aud__row{display:grid;grid-template-columns:230px 1fr;gap:clamp(24px,4vw,70px);padding:clamp(34px,5vh,56px) 0;border-top:1px solid var(--line)}
+  .aud__row:last-child{border-bottom:1px solid var(--line)}
+  .aud__tag{font-family:var(--mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);padding-top:10px}
+  .aud__body h3{font-family:var(--display);font-weight:700;font-size:clamp(1.7rem,3.4vw,2.8rem);line-height:1;letter-spacing:-.01em;margin-bottom:14px;max-width:18ch}
+  .aud__body p{color:var(--paper-dim);font-size:1.05rem;line-height:1.55;max-width:50ch;margin-bottom:20px}
+  .aud__cta{font-weight:700;font-size:15px;color:var(--paper);display:inline-flex;align-items:center;gap:10px;cursor:pointer}
+  .aud__cta .ar{color:var(--green);transition:transform .2s} .aud__cta:hover .ar{transform:translateX(5px)}
+  .aud__row.team .aud__cta .ar{color:var(--blue)}
+
+  /* ===== il team ===== */
+  .team{position:relative;z-index:2;background:var(--ink);border-top:1px solid rgba(255,255,255,.06)}
+  .team__in{max-width:1360px;margin:0 auto;padding:clamp(70px,11vh,150px) clamp(20px,4vw,56px)}
+  .team h2{font-family:var(--display);font-weight:700;font-size:clamp(2rem,4.5vw,3.5rem);line-height:1.02;letter-spacing:-.012em}
+  .team__lead{color:var(--paper-dim);font-size:clamp(1.05rem,1.3vw,1.2rem);max-width:50ch;margin-top:16px;line-height:1.5}
+  .team__grid{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(24px,2.6vw,42px);margin-top:clamp(44px,6vh,80px)}
+  .member{display:flex;flex-direction:column;gap:11px}
+  .avatar{width:80px;height:80px;border-radius:50%;object-fit:cover;object-position:center 30%;
+    border:1px solid var(--line);background:#111218;
+    filter:grayscale(1) contrast(1.04) brightness(.98);transition:filter .35s ease,transform .35s ease}
+  .member:hover .avatar{filter:none;transform:scale(1.04)}
+  .member.adv .avatar{border-color:rgba(46,134,255,.45)}
+  .member h4{font-family:var(--display);font-weight:600;font-size:1.12rem;line-height:1.1}
+  .member span{font-family:var(--mono);font-size:11.5px;letter-spacing:.03em;color:var(--muted);line-height:1.4}
+  .team__adv-label{grid-column:1/-1;font-family:var(--mono);font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--muted);margin-top:14px;border-top:1px solid var(--line);padding-top:26px}
+
+  /* ===== closing + footer ===== */
+  .closing{position:relative;z-index:2;background:#0c0d10;border-top:1px solid rgba(255,255,255,.06)}
+  .closing__in{max-width:1360px;margin:0 auto;padding:clamp(80px,13vh,172px) clamp(20px,4vw,56px)}
+  .closing h2{font-family:var(--display);font-weight:700;font-size:clamp(2.4rem,6vw,5rem);line-height:.98;letter-spacing:-.015em;max-width:15ch}
+  .closing h2 .red{color:var(--green)}
+  .closing__row{display:flex;gap:26px;align-items:center;flex-wrap:wrap;margin-top:34px}
+  .closing__status{font-family:var(--mono);font-size:12.5px;color:var(--muted);letter-spacing:.03em;margin-top:28px}
+  .closing__status b{color:var(--paper);font-weight:500}
+  footer{background:var(--ink);border-top:1px solid rgba(255,255,255,.08);position:relative;z-index:2}
+  .foot__in{max-width:1360px;margin:0 auto;padding:clamp(40px,6vh,64px) clamp(20px,4vw,56px);
+    display:flex;justify-content:space-between;align-items:flex-start;gap:34px;flex-wrap:wrap}
+  .foot__brand p{color:var(--muted);font-size:13px;margin-top:12px;max-width:32ch;line-height:1.5}
+  .foot__links{display:flex;gap:44px;flex-wrap:wrap}
+  .foot__col{display:flex;flex-direction:column;gap:9px}
+  .foot__col b{font-size:12px;color:var(--paper);font-weight:600;margin-bottom:4px}
+  .foot__col a{font-size:13px;color:var(--muted);transition:color .2s} .foot__col a:hover{color:var(--paper)}
+  .foot__legal{max-width:1360px;margin:0 auto;padding:18px clamp(20px,4vw,56px);border-top:1px solid rgba(255,255,255,.06);
+    display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;font-family:var(--mono);font-size:11px;color:#56616f;letter-spacing:.03em}
+
+  @media(max-width:900px){.team__grid{grid-template-columns:repeat(2,1fr)}}
+
+  /* ===== lead form ===== */
+  .closing__in{display:grid;grid-template-columns:1.02fr 1fr;gap:clamp(40px,6vw,84px);align-items:start}
+  .closing__sub{color:var(--paper-dim);font-size:1.08rem;line-height:1.55;max-width:38ch;margin-top:22px}
+  .closing__head .closing__status{margin-top:30px}
+  .lead{display:grid;gap:16px;max-width:460px;width:100%}
+  .field{display:grid;gap:7px}
+  .lead label:not(.consent){font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--paper-dim)}
+  .lead input[type=text],.lead input[type=email],.lead select,.lead textarea{
+    background:#111218;border:1px solid var(--line);border-radius:2px;color:var(--paper);
+    font-family:var(--body);font-size:15px;padding:12px 14px;width:100%;transition:border-color .2s,box-shadow .2s}
+  .lead textarea{resize:vertical;min-height:80px}
+  .lead select{appearance:none;cursor:pointer;
+    background-image:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'><path d='M1 1l5 5 5-5' stroke='%238E9099' stroke-width='1.6'/></svg>");
+    background-repeat:no-repeat;background-position:right 14px center;padding-right:34px}
+  .lead input:focus,.lead select:focus,.lead textarea:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(46,134,255,.18)}
+  .hp{position:absolute!important;left:-9999px;opacity:0;height:0;width:0}
+  .consent{display:flex;gap:10px;align-items:flex-start;cursor:pointer}
+  .consent input{margin-top:2px;accent-color:var(--green);width:16px;height:16px;flex:0 0 auto}
+  .consent span{font-size:13px;color:var(--paper-dim);line-height:1.45}
+  .lead .btn-primary{justify-self:start;margin-top:4px}
+  .lead__msg{font-family:var(--mono);font-size:13px;min-height:1.1em;margin:0}
+  .lead__msg.ok{color:var(--green)} .lead__msg.err{color:var(--red)}
+  .closing__mail{margin-top:14px;font-family:var(--mono);font-size:13px}
+  .closing__mail a{color:var(--green)} .closing__mail a:hover{color:var(--green-hover)}
+  .foot__mail{display:inline-block;margin-top:12px;font-family:var(--mono);font-size:13px;color:var(--green)}
+  .foot__mail:hover{color:var(--green-hover)}
+
+  @media(max-width:860px){.closing__in{grid-template-columns:1fr;gap:40px}}
+  @media(max-width:760px){
+    .aud__row{grid-template-columns:1fr;gap:10px;padding:30px 0}
+    .foot__in{flex-direction:column}
+  }
+</style>
+</head>
+<body>
+<div class="grain" aria-hidden="true"></div>
+<header>
+  <a class="wordmark" href="#"><span class="v">V</span><span class="sl">/</span><span class="m">MAX</span></a>
+  <nav class="links" aria-label="primary">
+    <a href="#how" data-i18n="nav1">Il prodotto</a><a href="#circuiti" data-i18n="nav2">Per i circuiti</a>
+    <a href="#audience" data-i18n="nav3">Per i team</a><a href="#team" data-i18n="nav4">Il team</a>
+  </nav>
+  <div class="right">
+    <div class="lang"><button data-lang="it" class="active">IT</button><i>/</i><button data-lang="en">EN</button></div>
+    <button class="cta" data-lead="" data-i18n="cta">Richiedi una demo</button>
+  </div>
+</header>
+
+<main>
+<section class="hero">
+  <div class="hero__media"><video src="assets/hero.mp4" poster="assets/hero-poster.jpg" autoplay muted loop playsinline></video></div>
+  <div class="hero__content">
+    <div class="kicker"><span class="r"></span><span data-i18n="kicker">Coaching AI · Karting</span></div>
+    <h1>
+      <span class="ln"><span data-i18n="h1a">Il tuo ingegnere</span></span>
+      <span class="ln"><span class="red" data-i18n="h1b">di pista.</span></span>
+    </h1>
+    <p class="lede" data-i18n="lede">L'intelligenza artificiale che ti guida in tempo reale e ti fa trovare la velocità, curva dopo curva.</p>
+    <div class="actions">
+      <button class="btn-primary" data-lead="" data-i18n="a1">Richiedi una demo</button>
+      <a class="btn-link" href="#how"><span data-i18n="a2">Guarda come funziona</span><span class="ar">→</span></a>
+    </div>
+  </div>
+</section>
+
+<section class="how" id="how">
+  <div class="how__head">
+    <h2 data-i18n="how_h">Come funziona</h2>
+    <p class="how__lede" data-i18n="how_l">Nessun grafico da leggere, nessuna sessione da riguardare. VMax lavora mentre guidi.</p>
+  </div>
+  <div class="how__steps">
+    <div class="hstep rv"><h3 data-i18n="s1h">Impara il tuo kart</h3><p data-i18n="s1p">Con sensori standard, GPS e piattaforma inerziale, VMax costruisce in pochi giri un gemello digitale del tuo kart, e lo aggiorna con l'usura delle gomme e le condizioni dell'asfalto.</p></div>
+    <div class="hstep rv"><h3 data-i18n="s2h">Trova il riferimento giusto</h3><p data-i18n="s2p">Dal gemello digitale calcola la traiettoria e i punti di frenata ottimali per quel kart su quel tracciato, e un obiettivo tarato sul tuo livello e raggiungibile adesso.</p></div>
+    <div class="hstep rv"><h3 data-i18n="s3h">Ti guida, giro dopo giro</h3><p data-i18n="s3p">Durante il giro ricevi indicazioni immediate su dove frenare e come impostare la curva, a schermo e in audio. Migliori mentre guidi, non a sessione finita.</p></div>
+  </div>
+  <div class="surf rv">
+    <div class="surf__label"><span class="gsq"></span><span data-i18n="pista_l">In pista</span></div>
+    <div class="pista">
+      <div class="phone2"><div class="phone2__scr">
+        <div class="p2bar"><span class="gsq"></span>Race<span class="p2live"><i></i>LIVE</span></div>
+        <div class="gauge">
+          <div class="gauge__brake" id="gBrake"></div>
+          <div class="gauge__thr" id="gThr"></div>
+        </div>
+        <div class="p2vals">
+          <div class="vr"><span>Speed (km/h)</span><b id="vSpeed">112.0</b></div>
+          <div class="vr"><span>Lap time</span><b id="vLap">1:23.418</b></div>
+          <div class="vr"><span>Delta to best</span><b id="vDelta" class="g">-0.137</b></div>
+        </div>
+      </div></div>
+      <div class="pista__txt">
+        <h3 data-i18n="pista_h">Il feedback arriva mentre guidi.</h3>
+        <p data-i18n="pista_p">Gas e freno a colori, il tuo delta in tempo reale rispetto al riferimento, e cue vocali. Guardi la strada, non lo schermo.</p>
+      </div>
+    </div>
+  </div>
+  <figure class="how__shot rv">
+    <div class="surf__label"><span class="gsq"></span><span data-i18n="box_l">Nei box</span></div>
+    <div class="frame">
+      <div class="frame__bar"><span class="sq"></span>telemetria</div>
+      <img src="assets/product.jpg" alt="Telemetria, l'app di analisi di VMax" loading="lazy">
+    </div>
+    <figcaption data-i18n="how_cap">Ogni sessione nel dettaglio, dalla traiettoria alle frenate, con il confronto tra i giri.</figcaption>
+  </figure>
+  <div class="how__modes">
+    <div class="mode scr rv"><b data-i18n="m_scr">Schermo</b><span data-i18n="m_scrd">Gas e freno a colori, traiettoria con indicatori in movimento.</span></div>
+    <div class="mode aud rv"><b data-i18n="m_aud">Audio</b><span data-i18n="m_audd">Via telefono, auricolari o audio integrato nel casco.</span></div>
+    <div class="mode hap rv"><b data-i18n="m_hap">Haptic</b><span data-i18n="m_hapd">Vibrazione per intensità e direzione. Principalmente per l'auto.</span></div>
+  </div>
+</section>
+
+<section class="circuits" id="circuiti">
+  <div class="circuits__in">
+    <h2 class="rv" data-i18n="c_h">Il cliente che torna vale più della tecnologia.</h2>
+    <p class="circuits__lead rv" data-i18n="c_l">Nel noleggio solo un cliente su dieci torna più di una volta. VMax trasforma la sessione in un progresso che fa venire voglia di riprovare.</p>
+    <div class="gain rv">
+      <div class="gain__num"><span class="p">+€</span><span id="gainNum">47.700</span></div>
+      <div>
+        <p class="gain__lbl" data-i18n="c_gl">Ricavo aggiuntivo stimato all'anno per un impianto da circa 30.000 sessioni, a canone e investimento iniziale zero.</p>
+        <div class="gain__break">
+          <div><b>+€36.000</b><span data-i18n="c_b1">clienti che tornano</span></div>
+          <div><b>+€11.700</b><span data-i18n="c_b2">sessione premium</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="drivers">
+      <div class="driver rv"><h4 data-i18n="c_d1h">Nessuna modifica</h4><p data-i18n="c_d1p">Installazione in meno di 15 minuti per kart, senza interventi sul telaio.</p></div>
+      <div class="driver rv"><h4 data-i18n="c_d2h">Si integra</h4><p data-i18n="c_d2p">Il profilo del pilota e i risultati confluiscono nel software che l'impianto usa già.</p></div>
+      <div class="driver rv"><h4 data-i18n="c_d3h">Niente da imparare</h4><p data-i18n="c_d3p">Il pilota non configura e non legge grafici. Sale, guida, migliora.</p></div>
+    </div>
+    <button class="btn-primary rv" data-i18n="c_cta">Diventa un circuito pilota</button>
+  </div>
+</section>
+
+<section class="why" id="perche">
+  <div class="why__in">
+    <h2 class="rv" data-i18n="w_h">Gli altri ti dicono cosa hai sbagliato solo a sessione finita.</h2>
+    <p class="circuits__lead rv" data-i18n="w_l">Con dodici minuti in pista, un'analisi da fare a casa non la applichi mai. VMax interviene mentre puoi ancora correggere.</p>
+    <div class="contrast rv">
+      <div class="old">
+        <h4 data-i18n="w_oldk">Dopo la sessione</h4>
+        <p data-i18n="w_oldp">Grafici e replay da studiare quando ormai sei sceso dal kart.</p>
+        <ul><li data-i18n="w_ol1">Feedback a posteriori</li><li data-i18n="w_ol2">Richiede competenza tecnica</li></ul>
+      </div>
+      <div class="new">
+        <h4 data-i18n="w_newk">Durante il giro</h4>
+        <p data-i18n="w_newp">Indicazioni immediate su frenate e traiettorie, mentre guidi.</p>
+        <ul><li data-i18n="w_nl1">Coaching in tempo reale</li><li data-i18n="w_nl2">Comprensibile al primo giro</li></ul>
+      </div>
+    </div>
+    <p class="why__fwd rv"><span data-i18n="w_fwd1">Non ricompone il tuo passato, calcola il tuo</span> <span class="hl" data-i18n="w_fwd2">prossimo passo.</span></p>
+    <p class="why__cred rv" data-i18n="w_cred">Dietro VMax ci sono anni di ricerca sul controllo ottimo del tempo sul giro all'Università di Trento, dove il gruppo fondatore pubblica su questi temi da oltre quindici anni.</p>
+  </div>
+</section>
+
+<section class="audience" id="audience">
+  <div class="audience__in">
+    <div class="aud__row piloti rv">
+      <div class="aud__tag" data-i18n="a_pt">Per i piloti</div>
+      <div class="aud__body">
+        <h3 data-i18n="a_ph">Alza il tuo livello, sessione dopo sessione.</h3>
+        <p data-i18n="a_pp">Un'app che ti allena a ogni uscita e tiene traccia dei tuoi progressi. Il coaching di chi corre davvero, alla portata di tutti.</p>
+        <a class="aud__cta" href="#contatti" data-lead="Pilota"><span data-i18n="a_pcta">Entra nella waitlist</span><span class="ar">→</span></a>
+      </div>
+    </div>
+    <div class="aud__row team rv">
+      <div class="aud__tag" data-i18n="a_tt">Per i team</div>
+      <div class="aud__body">
+        <h3 data-i18n="a_th">Un ingegnere per ogni pilota.</h3>
+        <p data-i18n="a_tp">Licenza multi-pilota per chi corre a livello agonistico. Il margine che decide un campionato, giro dopo giro, per tutta la squadra.</p>
+        <a class="aud__cta" href="#contatti" data-lead="Team"><span data-i18n="a_tcta">Parla con noi</span><span class="ar">→</span></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="team" id="team">
+  <div class="team__in">
+    <h2 class="rv" data-i18n="t_h">Il team</h2>
+    <p class="team__lead rv" data-i18n="t_l">VMax nasce all'Università di Trento, dalla ricerca sul controllo ottimo del veicolo. Cinque fondatori, due advisor scientifici.</p>
+    <div class="team__grid">
+      <div class="member rv"><img class="avatar" src="assets/team/mattia_piazza.jpg" alt="Mattia Piazza"><h4>Mattia Piazza</h4><span data-i18n="t_r1">Lead</span></div>
+      <div class="member rv"><img class="avatar" src="assets/team/filippo_faccini.jpeg" alt="Filippo Faccini"><h4>Filippo Faccini</h4><span>CTO</span></div>
+      <div class="member rv"><img class="avatar" src="assets/team/davide_stocco.jpg" alt="Davide Stocco"><h4>Davide Stocco</h4><span data-i18n="t_r3">Algorithm designer</span></div>
+      <div class="member rv"><img class="avatar" src="assets/team/giacomo_corradini.jpeg" alt="Giacomo Corradini"><h4>Giacomo Corradini</h4><span data-i18n="t_r4">AI engineer</span></div>
+      <div class="member rv"><img class="avatar" src="assets/team/giacomo_mason.jpg" alt="Giacomo Mason"><h4>Giacomo Mason</h4><span data-i18n="t_r6">CFO &amp; pilota professionista</span></div>
+      <div class="team__adv-label" data-i18n="t_adv">Advisor scientifici · Università di Trento</div>
+      <div class="member adv rv"><img class="avatar" src="assets/team/francesco_biral.jpg" alt="Prof. Francesco Biral"><h4>Prof. Francesco Biral</h4><span data-i18n="t_r7">Scientific Advisor</span></div>
+      <div class="member adv rv"><img class="avatar" src="assets/team/enrico_bertolazzi.jpg" alt="Prof. Enrico Bertolazzi"><h4>Prof. Enrico Bertolazzi</h4><span data-i18n="t_r8">Scientific Advisor</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="closing" id="contatti">
+  <div class="closing__in">
+    <div class="closing__head rv">
+      <h2><span data-i18n="cl_h1">Pronto a trovare </span><span class="red" data-i18n="cl_h2">la velocità?</span></h2>
+      <p class="closing__sub" data-i18n="cl_sub">Raccontaci chi sei. Ti ricontattiamo per una demo o per capire come VMax può aiutarti.</p>
+      <p class="closing__status"><b data-i18n="cl_s1">VMax è in sviluppo.</b> <span data-i18n="cl_s2">Primo circuito pilota previsto nel 2027.</span></p>
+      <p class="closing__mail"><a href="mailto:info@vmax-project.com">info@vmax-project.com</a></p>
+    </div>
+    <form class="lead rv" id="lead-form">
+      <input type="hidden" name="access_key" value="87b8e551-c9fa-4d49-9a34-aaa77f61b747">
+      <input type="hidden" name="subject" value="Nuovo contatto dal sito VMax">
+      <input type="hidden" name="from_name" value="Sito VMax">
+      <input type="checkbox" name="botcheck" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <div class="field">
+        <label for="lf-name" data-i18n="lf_name">Nome</label>
+        <input id="lf-name" name="name" type="text" autocomplete="name" required>
+      </div>
+      <div class="field">
+        <label for="lf-email" data-i18n="lf_email">Email</label>
+        <input id="lf-email" name="email" type="email" autocomplete="email" required>
+      </div>
+      <div class="field">
+        <label for="lf-type" data-i18n="lf_type">Sono un…</label>
+        <select id="lf-type" name="profilo" required>
+          <option value="" disabled selected data-i18n="lf_choose">Scegli…</option>
+          <option value="Circuito" data-i18n="lf_o1">Circuito</option>
+          <option value="Team" data-i18n="lf_o2">Team</option>
+          <option value="Pilota" data-i18n="lf_o3">Pilota</option>
+          <option value="Investitore" data-i18n="lf_o4">Investitore</option>
+          <option value="Altro" data-i18n="lf_o5">Altro</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="lf-msg" data-i18n="lf_msg">Messaggio (opzionale)</label>
+        <textarea id="lf-msg" name="message" rows="3"></textarea>
+      </div>
+      <label class="consent"><input type="checkbox" name="consenso" required><span data-i18n="lf_consent">Acconsento al trattamento dei dati per essere ricontattato.</span></label>
+      <button type="submit" class="btn-primary" data-i18n="lf_send">Invia</button>
+      <p class="lead__msg" id="lead-msg" role="status" aria-live="polite"></p>
+    </form>
+  </div>
+</section>
+
+<footer>
+  <div class="foot__in">
+    <div class="foot__brand">
+      <a class="wordmark" href="#"><span class="v">V</span><span class="sl">/</span><span class="m">MAX</span></a>
+      <p data-i18n="f_by">Un progetto nato all'Università di Trento.</p>
+      <a class="foot__mail" href="mailto:info@vmax-project.com">info@vmax-project.com</a>
+    </div>
+    <div class="foot__links">
+      <div class="foot__col"><b data-i18n="f_c1">Prodotto</b><a href="#how" data-i18n="f_l1">Come funziona</a><a href="#circuiti" data-i18n="f_l2">Per i circuiti</a><a href="#audience" data-i18n="f_l3">Per i team</a></div>
+      <div class="foot__col"><b data-i18n="f_c2">Progetto</b><a href="#team" data-i18n="f_l4">Il team</a><a href="#contatti" data-i18n="f_l5">Contatti</a></div>
+      <div class="foot__col"><b data-i18n="f_c3">Legale</b><a href="#" data-i18n="f_l6">Privacy</a><a href="#" data-i18n="f_l7">Cookie</a></div>
+    </div>
+  </div>
+  <div class="foot__legal">
+    <span data-i18n="f_copy">VMax · 2026</span>
+  </div>
+</footer>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script>
+var I18N={
+  it:{nav1:"Il prodotto",nav2:"Per i circuiti",nav3:"Per i team",nav4:"Il team",cta:"Richiedi una demo",
+    kicker:"Coaching AI · Karting",h1a:"Il tuo ingegnere",h1b:"di pista.",
+    lede:"L'intelligenza artificiale che ti guida in tempo reale e ti fa trovare la velocità, curva dopo curva.",
+    a1:"Richiedi una demo",a2:"Guarda come funziona"},
+  en:{nav1:"The product",nav2:"For circuits",nav3:"For teams",nav4:"The team",cta:"Book a demo",
+    kicker:"AI coaching · Karting",h1a:"Your race",h1b:"engineer.",
+    lede:"The AI that guides you in real time and finds you real speed, corner after corner.",
+    a1:"Book a demo",a2:"See how it works"}
+};
+function applyLang(l){document.documentElement.lang=l;
+  document.querySelectorAll("[data-i18n]").forEach(e=>{const k=e.getAttribute("data-i18n");if(I18N[l][k]!=null)e.textContent=I18N[l][k];});
+  document.querySelectorAll(".lang button").forEach(b=>b.classList.toggle("active",b.dataset.lang===l));}
+document.querySelectorAll(".lang button").forEach(b=>b.addEventListener("click",()=>applyLang(b.dataset.lang)));
+
+const reduce=matchMedia("(prefers-reduced-motion:reduce)").matches;
+const heroVid=document.querySelector(".hero__media video");
+if(reduce && heroVid){ heroVid.pause(); heroVid.removeAttribute("autoplay"); }
+if(!reduce && window.gsap){
+  const img=heroVid;
+  gsap.to(img,{scale:1.0,duration:9,ease:"power2.out"});       // slow cinematic settle
+  const tl=gsap.timeline({defaults:{ease:"power4.out"},delay:.25});
+  tl.from("header",{y:-16,opacity:0,duration:.6,ease:"power2.out"})
+    .from(".kicker",{opacity:0,y:14,duration:.5},"-=.1")
+    .from("h1 .ln>span",{yPercent:120,duration:1,stagger:.1},"-=.15")
+    .from(".lede",{opacity:0,y:16,duration:.6},"-=.55")
+    .from(".actions",{opacity:0,y:14,duration:.5},"-=.4");
+  addEventListener("pointermove",e=>{const x=(e.clientX/innerWidth-.5);
+    gsap.to(img,{x:x*-22,duration:1.2,ease:"power2.out"});});
+}
+</script>
+<script>
+Object.assign(I18N.it,{
+  how_h:"Come funziona",how_l:"Nessun grafico da leggere, nessuna sessione da riguardare. VMax lavora mentre guidi.",
+  how_cap:"Ogni sessione nel dettaglio, dalla traiettoria alle frenate, con il confronto tra i giri.",
+  pista_l:"In pista",box_l:"Nei box",pista_h:"Il feedback arriva mentre guidi.",
+  pista_p:"Gas e freno a colori, il tuo delta in tempo reale rispetto al riferimento, e cue vocali. Guardi la strada, non lo schermo.",
+  s1h:"Impara il tuo kart",s1p:"Con sensori standard, GPS e piattaforma inerziale, VMax costruisce in pochi giri un gemello digitale del tuo kart, e lo aggiorna con l'usura delle gomme e le condizioni dell'asfalto.",
+  s2h:"Trova il riferimento giusto",s2p:"Dal gemello digitale calcola la traiettoria e i punti di frenata ottimali per quel kart su quel tracciato, e un obiettivo tarato sul tuo livello e raggiungibile adesso.",
+  s3h:"Ti guida, giro dopo giro",s3p:"Durante il giro ricevi indicazioni immediate su dove frenare e come impostare la curva, a schermo e in audio. Migliori mentre guidi, non a sessione finita.",
+  scr_live:"IN PISTA",gas:"GAS",brk:"FRENO",
+  m_scr:"Schermo",m_scrd:"Gas e freno a colori, traiettoria con indicatori in movimento.",
+  m_aud:"Audio",m_audd:"Via telefono, auricolari o audio integrato nel casco.",
+  m_hap:"Haptic",m_hapd:"Vibrazione per intensità e direzione. Principalmente per l'auto."
+});
+Object.assign(I18N.en,{
+  how_h:"How it works",how_l:"No charts to read, no session to review. VMax works while you drive.",
+  how_cap:"Every session in detail, from the line to the braking points, with lap-by-lap comparison.",
+  pista_l:"On track",box_l:"In the pits",pista_h:"Feedback arrives while you drive.",
+  pista_p:"Throttle and brake in colour, your real-time delta vs. your reference, and spoken cues. You watch the track, not the screen.",
+  s1h:"It learns your kart",s1p:"With standard sensors (GPS and an inertial unit), VMax builds a digital twin of your kart in a few laps, and keeps it updated as tyres and track change.",
+  s2h:"It finds the right reference",s2p:"From the digital twin it computes the optimal line and braking points for that kart on that track, plus a target set to your level and reachable now.",
+  s3h:"It guides you, lap after lap",s3p:"During the lap you get immediate cues on where to brake and how to take the corner, on screen and in audio. You improve while you drive, not after the session.",
+  scr_live:"ON TRACK",gas:"GAS",brk:"BRAKE",
+  m_scr:"Screen",m_scrd:"Colour-coded throttle and brake, trajectory with moving indicators.",
+  m_aud:"Audio",m_audd:"Via phone, earbuds, or helmet-embedded audio.",
+  m_hap:"Haptic",m_hapd:"Vibration by intensity and direction. Mainly for cars."
+});
+applyLang(document.documentElement.lang||'it');
+
+(function(){
+  const reduce=matchMedia("(prefers-reduced-motion:reduce)").matches;
+  const steps=[...document.querySelectorAll('.steps li')];
+  const lineFill=document.querySelector('.steps__line i');
+  const stepsEl=document.querySelector('.steps');
+  if(stepsEl){
+    new IntersectionObserver((es,ob)=>{es.forEach(e=>{if(e.isIntersecting){
+      if(lineFill){ if(window.gsap&&!reduce) gsap.to(lineFill,{scaleY:1,duration:1.6,ease:'power2.out'}); else lineFill.style.transform='scaleY(1)'; }
+      ob.disconnect();
+    }});},{threshold:.2}).observe(stepsEl);
+  }
+  const io2=new IntersectionObserver((es,ob)=>{es.forEach(e=>{if(e.isIntersecting){
+    const i=steps.indexOf(e.target); setTimeout(()=>e.target.classList.add('on'), Math.max(0,i)*140); ob.unobserve(e.target);
+  }});},{threshold:0,rootMargin:"0px 0px 10% 0px"});
+  steps.forEach(s=>io2.observe(s));
+
+  const trk=document.getElementById('ideal'),pos=document.getElementById('pos'),
+    th=document.getElementById('th'),br=document.getElementById('br'),bm=document.getElementById('brakeMark');
+  if(trk&&pos){
+    const len=trk.getTotalLength();
+    const bp=trk.getPointAtLength(.34*len); bm.setAttribute('cx',bp.x); bm.setAttribute('cy',bp.y);
+    const frame=(ph)=>{
+      const p=trk.getPointAtLength(ph*len); pos.setAttribute('cx',p.x); pos.setAttribute('cy',p.y);
+      let gas,brake;
+      if(ph<.30){gas=.92;brake=0;}
+      else if(ph<.46){const t=(ph-.30)/.16; gas=.92*(1-t); brake=.2+.75*t;}
+      else if(ph<.58){const t=(ph-.46)/.12; gas=.15+.12*t; brake=.95*(1-t);}
+      else {const t=(ph-.58)/.42; gas=.3+.65*t; brake=0;}
+      th.style.height=(12+gas*86)+'%'; br.style.height=(4+brake*90)+'%';
+      bm.style.opacity=(ph>.26&&ph<.46)?'1':'0';
+    };
+    if(reduce){ frame(.4); }
+    else{ let s=null; const dur=5400;
+      const loop=(t)=>{ if(s==null)s=t; frame((((t-s)%dur)/dur)); requestAnimationFrame(loop); };
+      requestAnimationFrame(loop);
+    }
+  }
+})();
+</script>
+<script>
+Object.assign(I18N.it,{
+  c_h:"Il cliente che torna vale più della tecnologia.",
+  c_l:"Nel noleggio solo un cliente su dieci torna più di una volta. VMax trasforma la sessione in un progresso che fa venire voglia di riprovare.",
+  c_gl:"Ricavo aggiuntivo stimato all'anno per un impianto da circa 30.000 sessioni, a canone e investimento iniziale zero.",
+  c_b1:"clienti che tornano",c_b2:"sessione premium",
+  c_d1h:"Nessuna modifica",c_d1p:"Installazione in meno di 15 minuti per kart, senza interventi sul telaio.",
+  c_d2h:"Si integra",c_d2p:"Il profilo del pilota e i risultati confluiscono nel software che l'impianto usa già.",
+  c_d3h:"Niente da imparare",c_d3p:"Il pilota non configura e non legge grafici. Sale, guida, migliora.",
+  c_cta:"Diventa un circuito pilota",
+  w_h:"Gli altri ti dicono cosa hai sbagliato solo a sessione finita.",
+  w_l:"Con dodici minuti in pista, un'analisi da fare a casa non la applichi mai. VMax interviene mentre puoi ancora correggere.",
+  w_oldk:"Dopo la sessione",w_oldp:"Grafici e replay da studiare quando ormai sei sceso dal kart.",
+  w_ol1:"Feedback a posteriori",w_ol2:"Richiede competenza tecnica",
+  w_newk:"Durante il giro",w_newp:"Indicazioni immediate su frenate e traiettorie, mentre guidi.",
+  w_nl1:"Coaching in tempo reale",w_nl2:"Comprensibile al primo giro",
+  w_fwd1:"Non ricompone il tuo passato, calcola il tuo",w_fwd2:"prossimo passo.",
+  w_cred:"Dietro VMax ci sono anni di ricerca sul controllo ottimo del tempo sul giro all'Università di Trento, dove il gruppo fondatore pubblica su questi temi da oltre quindici anni."
+});
+Object.assign(I18N.en,{
+  c_h:"The customer who comes back is worth more than the tech.",
+  c_l:"In rental karting, only one customer in ten returns more than once. VMax turns the session into progress worth coming back for.",
+  c_gl:"Estimated extra revenue per year for a track with around 30,000 sessions, at zero fee and zero upfront.",
+  c_b1:"returning customers",c_b2:"premium session",
+  c_d1h:"No modifications",c_d1p:"Installed in under 15 minutes per kart, with no work on the chassis.",
+  c_d2h:"It integrates",c_d2p:"Driver profiles and results flow into the software your track already uses.",
+  c_d3h:"Nothing to learn",c_d3p:"The driver configures nothing and reads no charts. Get in, drive, improve.",
+  c_cta:"Become a pilot track",
+  w_h:"Others only tell you what you did wrong once the session's over.",
+  w_l:"With twelve minutes on track, analysis to do at home never gets applied. VMax steps in while you can still fix it.",
+  w_oldk:"After the session",w_oldp:"Charts and replays to study once you're already off the kart.",
+  w_ol1:"Hindsight feedback",w_ol2:"Needs technical skill",
+  w_newk:"During the lap",w_newp:"Immediate cues on braking and lines, while you drive.",
+  w_nl1:"Real-time coaching",w_nl2:"Clear from the first lap",
+  w_fwd1:"It doesn't recompose your past, it computes your",w_fwd2:"next step.",
+  w_cred:"Behind VMax are years of research on minimum-lap-time optimal control at the University of Trento, where the founding team has published on these topics for over fifteen years."
+});
+applyLang(document.documentElement.lang||'it');
+
+(function(){
+  const reduce=matchMedia("(prefers-reduced-motion:reduce)").matches;
+  const io=new IntersectionObserver((es,ob)=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');ob.unobserve(e.target);}});},{threshold:0,rootMargin:"0px 0px 12% 0px"});
+  document.querySelectorAll('.rv').forEach(el=>io.observe(el));
+
+  const gn=document.getElementById('gainNum'),gain=document.querySelector('.gain');
+  if(gn&&gain){
+    const target=47700, fmt=n=>n.toLocaleString('it-IT');
+    if(reduce){ gn.textContent=fmt(target); }
+    else{
+      gn.textContent='0';
+      new IntersectionObserver((es,ob)=>{es.forEach(e=>{if(e.isIntersecting){
+        let s=null,dur=1500;
+        const step=(t)=>{if(s==null)s=t;const p=Math.min((t-s)/dur,1),e2=1-Math.pow(1-p,3);
+          gn.textContent=fmt(Math.round(target*e2)); if(p<1)requestAnimationFrame(step);};
+        requestAnimationFrame(step); ob.disconnect();
+      }});},{threshold:.4}).observe(gain);
+    }
+  }
+})();
+</script>
+<script>
+Object.assign(I18N.it,{
+  a_pt:"Per i piloti",a_ph:"Alza il tuo livello, sessione dopo sessione.",
+  a_pp:"Un'app che ti allena a ogni uscita e tiene traccia dei tuoi progressi. Il coaching di chi corre davvero, alla portata di tutti.",
+  a_pcta:"Entra nella waitlist",
+  a_tt:"Per i team",a_th:"Un ingegnere per ogni pilota.",
+  a_tp:"Licenza multi-pilota per chi corre a livello agonistico. Il margine che decide un campionato, giro dopo giro, per tutta la squadra.",
+  a_tcta:"Parla con noi",
+  t_h:"Il team",t_l:"VMax nasce all'Università di Trento, dalla ricerca sul controllo ottimo del veicolo. Cinque fondatori, due advisor scientifici.",
+  t_r1:"Lead",t_r3:"Algorithm designer",t_r4:"AI engineer",t_r6:"CFO & pilota professionista",
+  t_adv:"Advisor scientifici · Università di Trento",t_r7:"Scientific Advisor",t_r8:"Scientific Advisor",
+  cl_h1:"Pronto a trovare ",cl_h2:"la velocità?",
+  cl_s1:"VMax è in sviluppo.",cl_s2:"Primo circuito pilota previsto nel 2027.",
+  f_by:"Un progetto nato all'Università di Trento.",
+  f_c1:"Prodotto",f_l1:"Come funziona",f_l2:"Per i circuiti",f_l3:"Per i team",
+  f_c2:"Progetto",f_l4:"Il team",f_l5:"Contatti",f_c3:"Legale",f_l6:"Privacy",f_l7:"Cookie",
+  f_copy:"VMax · 2026"
+});
+Object.assign(I18N.en,{
+  a_pt:"For drivers",a_ph:"Raise your level, session after session.",
+  a_pp:"An app that coaches you every time out and tracks your progress. The coaching real racers get, within everyone's reach.",
+  a_pcta:"Join the waitlist",
+  a_tt:"For teams",a_th:"An engineer for every driver.",
+  a_tp:"A multi-driver licence for competition racing. The margins that decide a championship, lap after lap, for the whole team.",
+  a_tcta:"Talk to us",
+  t_h:"The team",t_l:"VMax was born at the University of Trento, out of research on vehicle optimal control. Five founders, two scientific advisors.",
+  t_r1:"Lead",t_r3:"Algorithm designer",t_r4:"AI engineer",t_r6:"CFO & professional driver",
+  t_adv:"Scientific advisors · University of Trento",t_r7:"Scientific Advisor",t_r8:"Scientific Advisor",
+  cl_h1:"Ready to find ",cl_h2:"your speed?",
+  cl_s1:"VMax is in development.",cl_s2:"First pilot track planned for 2027.",
+  f_by:"A project born at the University of Trento.",
+  f_c1:"Product",f_l1:"How it works",f_l2:"For circuits",f_l3:"For teams",
+  f_c2:"Project",f_l4:"The team",f_l5:"Contact",f_c3:"Legal",f_l6:"Privacy",f_l7:"Cookie",
+  f_copy:"VMax · 2026"
+});
+applyLang(document.documentElement.lang||'it');
+</script>
+<script>
+Object.assign(I18N.it,{
+  cl_sub:"Raccontaci chi sei. Ti ricontattiamo per una demo o per capire come VMax può aiutarti.",
+  lf_name:"Nome",lf_email:"Email",lf_type:"Sono un…",lf_choose:"Scegli…",
+  lf_o1:"Circuito",lf_o2:"Team",lf_o3:"Pilota",lf_o4:"Investitore",lf_o5:"Altro",
+  lf_msg:"Messaggio (opzionale)",lf_consent:"Acconsento al trattamento dei dati per essere ricontattato.",
+  lf_send:"Invia",lf_sending:"Invio…",lf_ok:"Grazie! Ti ricontattiamo presto.",
+  lf_err:"Qualcosa è andato storto. Riprova tra poco."
+});
+Object.assign(I18N.en,{
+  cl_sub:"Tell us who you are. We'll get back to you for a demo or to see how VMax can help.",
+  lf_name:"Name",lf_email:"Email",lf_type:"I'm a…",lf_choose:"Choose…",
+  lf_o1:"Circuit",lf_o2:"Team",lf_o3:"Driver",lf_o4:"Investor",lf_o5:"Other",
+  lf_msg:"Message (optional)",lf_consent:"I consent to my data being processed so you can contact me.",
+  lf_send:"Send",lf_sending:"Sending…",lf_ok:"Thanks! We'll be in touch soon.",
+  lf_err:"Something went wrong. Please try again shortly."
+});
+applyLang(document.documentElement.lang||'it');
+
+(function(){
+  const t=(k)=>{const L=document.documentElement.lang||'it';return (I18N[L]&&I18N[L][k])||k;};
+  // CTA -> form wiring (scroll + pre-select profile)
+  document.querySelectorAll('[data-lead]').forEach(el=>{
+    el.addEventListener('click',()=>{
+      const v=el.getAttribute('data-lead'); const sel=document.getElementById('lf-type');
+      if(sel&&v) sel.value=v;
+      if(el.tagName!=='A'){const c=document.getElementById('contatti'); if(c)c.scrollIntoView({behavior:'smooth'});}
+      setTimeout(()=>{const n=document.getElementById('lf-name'); if(n)n.focus({preventScroll:true});},700);
+    });
+  });
+  // AJAX submit to Web3Forms
+  const form=document.getElementById('lead-form');
+  if(form){
+    const msg=document.getElementById('lead-msg');
+    form.addEventListener('submit', async (e)=>{
+      e.preventDefault();
+      msg.className='lead__msg'; msg.textContent=t('lf_sending');
+      try{
+        const data=Object.fromEntries(new FormData(form));
+        const r=await fetch('https://api.web3forms.com/submit',{method:'POST',
+          headers:{'Content-Type':'application/json',Accept:'application/json'},body:JSON.stringify(data)});
+        const j=await r.json();
+        if(j.success){ form.reset(); msg.className='lead__msg ok'; msg.textContent=t('lf_ok'); }
+        else { msg.className='lead__msg err'; msg.textContent=t('lf_err'); }
+      }catch(_){ msg.className='lead__msg err'; msg.textContent=t('lf_err'); }
+    });
+  }
+})();
+</script>
+<script>
+/* In-pista phone: faithful recreation of the onboard Race screen */
+(function(){
+  const reduce=matchMedia("(prefers-reduced-motion:reduce)").matches;
+  const gThr=document.getElementById('gThr'),gBrake=document.getElementById('gBrake'),
+    vSpeed=document.getElementById('vSpeed'),vLap=document.getElementById('vLap'),vDelta=document.getElementById('vDelta');
+  if(!gThr) return;
+  const fmtLap=s=>{const ms=Math.round(s*1000),m=(ms/60000|0),sec=((ms/1000|0)%60),mm=ms%1000;
+    return m+':'+String(sec).padStart(2,'0')+'.'+String(mm).padStart(3,'0');};
+  const frame=ph=>{
+    let thr,brk,spd;
+    if(ph<.30){thr=.95;brk=0;spd=113+5*Math.sin(ph*12);}
+    else if(ph<.46){const t=(ph-.30)/.16;thr=.95*(1-t);brk=.15+.8*t;spd=118-62*t;}
+    else if(ph<.58){const t=(ph-.46)/.12;thr=.12+.1*t;brk=.9*(1-t);spd=56+4*t;}
+    else{const t=(ph-.58)/.42;thr=.3+.68*t;brk=0;spd=60+58*t;}
+    gThr.style.height=(thr*100).toFixed(1)+'%';
+    gBrake.style.height=(brk*100).toFixed(1)+'%';
+    vSpeed.textContent=spd.toFixed(1);
+  };
+  if(reduce){frame(.42); vLap.textContent='1:23.418'; vDelta.textContent='-0.137'; return;}
+  let start=null; const dur=5600, lapBase=82;
+  const loop=t=>{ if(start==null)start=t; const el=(t-start)/1000;
+    frame(((t-start)%dur)/dur);
+    vLap.textContent=fmtLap(lapBase + (el % 6));
+    requestAnimationFrame(loop);
+  };
+  requestAnimationFrame(loop);
+  setInterval(()=>{ const d=Math.random()*0.5-0.33;
+    vDelta.textContent=(d<0?'-':'+')+Math.abs(d).toFixed(3);
+    vDelta.className=d<0?'g':'r';
+  },900);
+})();
+</script>
+<script>
+if(!('IntersectionObserver' in window)){
+  document.querySelectorAll('.rv').forEach(function(e){e.classList.add('in');});
+  document.querySelectorAll('.steps li').forEach(function(e){e.classList.add('on');});
+  var lf=document.querySelector('.steps__line i'); if(lf) lf.style.transform='scaleY(1)';
+}
+</script>
+</body>
+</html>
